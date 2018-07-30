@@ -3,9 +3,9 @@
 <p align="center">
 author <a href="https://ysnim.ink">Yoonsung Choi</a>
 </p>
-<p align="center">
+<span align="center">
 [![GitHub version](https://badge.fury.io/gh/QuartzWorld%2FWhitepaper.svg)](https://badge.fury.io/gh/QuartzWorld%2FWhitepaper)
-</p>
+</span>
 
 ## Abstract
 
