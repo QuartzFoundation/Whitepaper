@@ -11,7 +11,7 @@ author <a href="https://ysnim.ink">Yoonsung Choi</a>
 
 ## Abstract
 
-이 문서는 Blockchain의 초당 Transaction 처리 속도를 극도로 끌어올리며, 경제적인 모델을 도입하여 합리적인 수수료를 지불할 수 있는 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표에 따라 Transaction 처리량이 변동되며 따라서 Validator들이 받게 되는 수수료를 달리 하는 것으로 자율적으로 작동하게 됩니다.
+이 문서는 Blockchain의 초당 Transaction 처리 속도를 극도로 끌어올리며, 경제적인 모델을 도입하여 합리적인 수수료를 지불할 수 있는 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표에 따라 Transaction 처리량이 변동되며 따라서 Validator들이 받게 되는 수수료를 달리 하는 것으로 네트워크를 자율적으로 작동하게끔 합니다.
 
 이 Framework는 Ethereum과 통합되어 Smart Contract의 작동을 병렬적으로 처리하며, Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
 
@@ -53,18 +53,18 @@ Quartz Framework를 생성된 Network는 기본적으로 Ethereum에 연결되�
 * 법정화폐를 기반으로 하는 Point of Sales System Network
 * DApp을 위한 Network Pool
 * Multi-Party Computation
-* 소상공인을 위한 Point 시스템, 또는 지급 결제
+* Point 시스템
+* 지급 결제
 * Ticketing / Ticket Trade Platform
 * Private Network
 
 
-
-## Quartz Framework
+## Scalability Problem
 
 Blockchain의 확장성 문제는 다음과 같은 방법으로 해결할 수 있습니다.
 
 
-### Protocol을 통한 개선
+### 🤝 Protocol을 통한 개선
 
 Blockchain의 Block은 크기가 제한되어 있습니다. Bitcoin의 경우 Transaction이 담겨질 공간에 대한 용량적 제한이 있고, Ethereum의 경우 실행 단위에 대해 Gas 제한을 두어 Block 크기가 제한되어 있습니다. Ethereum의 경우 Gas 제한을 채굴자가 설정할 수 있으나, Block 보상으로 인해 수수료를 위한 Block 크기에 대한 경쟁을 하지 않고 있습니다. 단순히 Block의 크기가 증가하면, Block에 담겨지는 Transaction의 수는 증가할 것이고, 결과적으로 초당 처리할 수 있는 Transaction 수가 증가하게 됩니다.
 
@@ -77,7 +77,7 @@ GHOST Protocol은 Orphan Block에 들어있는 Transaction이 올바르게 처�
 Proof of Work는 Transaction을 처리하는 시간보다, Block을 생성하는 시간에 더욱 많은 연산력을 사용합니다. 그렇기 때문에 Block을 생성하는 시간보다 Transaction을 검증하는데 연산력을 사용할 수 있도록 지분을 기반으로 하는 Proof of Stake로 합의 알고리즘을 변경한다면 더욱 많은 Transaction을 수용할 수 있게 됩니다.
 
 
-### 검증 연산을 줄이는 방법
+### 🎲 검증 연산을 줄이는 방법
 
 이는 각각 On-chain과 Off-chain으로 나뉠 수 있으며, 실질적으로 연구되고 있는 것은 Zero Knowledge Proof, Sharding입니다.
 
@@ -88,15 +88,33 @@ Zero Knowledge Proof는 zkSNARKs와 zkSTARKs, Bullet Proof와 같은 것들이 �
 Sharding은 Ethereum의 경우 모든 상태를 Merkle Patricia Tree를 이용하여 저장합니다. 여기에서 각 Shard는 Tree의 하위 부분에 대한 검증을 하는 대신 주 Chain에는 결과만 전송하는 것으로, 이 또한 검증 비용의 크기를 획기적으로 줄이게 됩니다.
 
 
-### 2-Layer Solution
+### 🥈 2-Layer Scalability
 
-Plasma의 경우 또한 동일합니다. Transaction의 내용을 Rootchain에 전송하지 않고, Transaction ID 만 전송하고, 주기적인 검증을 통해 Transaction이 올바른지 검증하게 됩니다.
+주 Blockchain을 Kernel이라고 보고, 이를 기반으로 확장성을 해결하는 것을 2-Layer Scalability 솔루션이라 합니다. 이러한 솔루션들은 Payment Channel, State Channel, Plasma 가 있습니다.
+
+기본적으로 모든 Transaction에는 수수료를 필요로 합니다. 자산의 전송의 경우에도 그렇고, Smart Contract의 경우도 동일합니다.
+
+Payment Channel은 Bitcoin에서 Lightning Network라고 불리는 것으로, Block에 포함되기 위한 수수료 보다 더욱 낮은 최소한의 수수료로 Bitcoin의 전송을 가능하게 합니다. 당사자 간의 직접적인 통신을 통해서 Transaction과 서명 값을 교환하고, 최종적인 Transaction이라는 것을 확인하기 위해서 Nonce를 한 단계씩 증가 시킵니다. 추후에 당사자들 중, 한 사람이 가장 높은 Nonce 값과 서명을 Bitcoin 네트워크에 제출하는 것으로 수수료를 줄일 수 있습니다.
+
+State Channel은 기본적으로 Payment Channel과 동일합니다. 당사자간의 Smart Contract의 작동의 결과를 Nonce 값과 서명을 네트워크에 공개하는 것으로 많은 작동에 대한 수수료를 줄일 수 있습니다. 이는 대표적으로 Token의 다자간 전송에 사용할 수 있습니다.
+
+Plasma또한 Off-chain를 기반으로 작동하지만, 자체적인 Proof-of-Stake 합의 알고리즘을 가지고 있고, 모든 Transaction을 Merkle Tree로 관리하고, Transaction의 증거를 제출하는 것으로 검증 비용을 줄이도록 합니다. 만약 증거가 부패되었다면, Validator는 Plasma Blockchain의 검증을 주 Blockchain인 Ethereum에 맏겨 무결성을 유지합니다.
+
+Plasma 상의 다양한 Smart Contract의 작동의 증거만 Block에 담기기 때문에, 결과적으로 병렬로 처리되며, 많은 수의 Transaction을 수용할 수 있는 환경이 됩니다.
 
 
-### Inter-Blockchain
+### 🌌 Inter-Blockchain
 
-이는 Blockchain과 연결되는 Blockchain을 말합니다. 이는 주 Blockchain의 Transaction들을 연결된 Blockchain에서 처리한 다음에, 결과만 주 Blockchain에 공개되는 것을 말합니다.
+이는 Blockchain과 연결되는 Blockchain을 말합니다. 이는 주 Blockchain의 Transaction들을 연결된 Blockchain에서 처리한 다음에, 결과만 주 Blockchain에 공개되는 것을 말합니다. 이러한 Inter-Blockchain의 종류로는 Cosmos, Aion, Polkadot, Proof of Authority Network 등이 있습니다.
 
-주 Blockchain에 연결되는 Inter-Blockchain은 
+주 Blockchain에 연결되는 Inter-Blockchain은 자체적인 합의 알고리즘을 가지고 빠른 처리 속도를 가집니다. 이는 각 DApp 마다 Blockchain을 만들어서 작동시킬 수 있어 병목 현상이 없는 사용자 경험을 가지도록 할 수 있습니다.
+
+또한 Inter-Blockchain은 프로토콜 상으로 호환되지 않는 다양한 Blockchain을 연결하여 상호 연결성을 보장하기도 합니다. 예를 들어, Bitcoin 네트워크와 Ethereum 네트워크의 상호 운용을 생각해 보면, Ethereum 네트워크 상에서 Bitcoin을 거래할 수도 있으며, Inter-Blockchain 상에서 구현된 Decentralized Exchange(이하 DEX)에서 서로의 재화를 교환할 수 있습니다.
 
 
+## Quartz Framework
+
+
+
+## Citations
+- [[1]](http://) "" http://
