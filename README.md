@@ -6,6 +6,7 @@ author <a href="https://ysnim.ink">Yoonsung Choi</a>
 
 <p align="center">
   <a href="https://github.com/QuartzWorld/Whitepaper"><img src="https://badge.fury.io/gh/QuartzWorld%2FWhitepaper.svg" /></a>
+  <a href="https://github.com/QuartzWorld/Whitepaper/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" /></a>
 </p>
 
 ## Abstract
