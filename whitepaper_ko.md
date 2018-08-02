@@ -69,17 +69,19 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 - <b> 새로운 합의 알고리즘 </b> 각 DApp의 원활한 작동을 위해서 Transaction 수용률은 높으면 높을 수록 좋습니다. 즉 Transaction 수용률이 높으면 많은 사용자들을 수용할 수 있다는 것과 같습니다. 그러기 위해서 초당 Transaction 처리율(이하 tps)을 극도로 끌어올려야 합니다. 그러기 위해서 새로운 경제 모델을 도입한 새로운 합의 알고리즘에 대한 연구를 필요로 합니다.
 
-- <b> 시간 기반 </b> 현재 존재하는 많은 Consensus Algorithm은 일종의 대표자를 선출하여 Block을 생성하게 합니다. Quartz Framework는 대표자를 선출하게 하지 않고 이미 물리적으로 존재하며, 비 가역적인 시간을 이용하여 Block을 생성합니다. 모든 참여 Node는 해당 시간 간극만큼 주기적으로 Block을 추적하고 Transaction을 Block에 담게 됩니다. 이는 일종의 Key Block을 생성하고, 이후에 Micro Block을 모으는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)와 유사합니다. 다만 NG의 Election 과정이 시간에 의해 존재하지 않게 되었고, Block n은 시간을 표방하기 때문에, 즉각적인 최종성을 획득할 수 있습니다.
+- <b> Ethereum의 대량 채택 </b> 현재의 Ethereum은 모든 Node가 Transaction을 o(c)의 속도로 계산하게 됩니다. 이는 Light Client로 작동하는 IOT Device, Smart Phone에게 배터리나, 연산능력 그리고 Blockchain은 용량에 치명적입니다. 또한 다른 Node를 신뢰하여야 한다는 점 때문에 네트워크의 대역폭을 지속적으로 사용합니다. 이는 Ethereum이 채택되기 어려운 환경이며, 이러한 문제를 해결할 수 있는 방법이 고려되어야 합니다.
 
-- <b> Proof of Stake </b> 
+위와 같은 이유로 Quartz Framework를 구현하려고 하며, 이는 다음과 같은 기능을 제공하여 최종 사용자에게 극도로 최적화된 사용자 경험을 제공
 
-- <b> Sharding </b> 
+- <b> Time based Block </b> 현재 존재하는 많은 Consensus Algorithm은 일종의 대표자를 선출하여 Block을 생성하게 합니다. Quartz Framework는 대표자를 선출하게 하지 않고 이미 물리적으로 존재하며, 비 가역적인 시간을 이용하여 Block을 생성합니다. 모든 참여 Node는 해당 시간 간극만큼 주기적으로 Block을 추적하고 Transaction을 Block에 담게 됩니다. 이는 일종의 Key Block을 생성하고, 이후에 Micro Block을 모으는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)와 유사합니다. 다만 NG의 Election 과정이 시간에 의해 존재하지 않게 되었고, Block n은 시간을 표방하기 때문에, 즉각적인 최종성을 획득할 수 있습니다.
 
-- <b> Own Cryptoeconomy </b> 
+- <b> Proof of Stake </b> Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 Block에 66.7% 이상의 투표율을 가져야 Block이 최종성을 띠며 네트워크가 공격에 대한 저항성이 생깁니다. 모든 Validator는 시간을 기반으로하는 Block에 투표를 할 뿐이며, 모든 이용자들은 투표 내역에 따라서 Transaction을 개별적으로 처리하게 됩니다.
 
-- <b> Light Client </b> 
+- <b> Sharding & Light Client </b> 모든 이용자들은 특정 Smart Contract만을 추적할 수 있으며, Validator가 투표한 내역에 따라서 해당 Smart Contract의 Merkle Root를 가지고, 다른 이용자와 동기화 할 수 있습니다. 이는 이용자가 특정 Transaction만 처리하여야 하는 동기를 제공하며, 모든 Block의 데이터 복제는 이용자들 사이에 분산되어 있습니다.
 
-- <b> WhiteLabel Wallet </b> 
+- <b> Own Cryptoeconomy </b> 각 DApp을 이용하기 위해서 발행된 Token을 Transaction 수수료로 지불하고, Validator는 수수료를 얻기 위해서 Block에 투표하게 됩니다. Validator는 담보된 Token에 따라 투표권을 얻으며, 전체 투표량에 따라 Transaction이 처리됩니다. 이는 일종의 Transaction 수수료 옥션입니다. Transaction을 생성하는 이용자들은 최저한의 수수료를 베팅하고, Validator들은 이 수수료를 취하기 위해서 최대한 투표를 진행하게 됩니다. 투표가 100%에 가까워지면 모든 Transaction의 수수료를 취할 수 있으며, 반대로 투표가 0%에 가깝다면 수수료를 취할 수 없을 것입니다. 이는 장기적으로 보았을 때, 0과 1로 나뉘는 수수료 옥션 게임이 될 것입니다.
+
+- <b> WhiteLabel Wallet </b> Quartz Framework는 Ethereum상의 ERC-20 Token별로 Network를 생성할 수 있으며, 그에 따라서 Whitelabel Wallet들을 제공할 수 있습니다. 이 Whitelabel Wallet은 각 Mobile OS별로 제공되며, Transaction 수수료를 Token으로 지불합니다.
 
 ## Citations
 - [[1]](http://) "" http://
