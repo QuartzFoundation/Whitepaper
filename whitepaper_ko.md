@@ -86,6 +86,46 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 ## Time based Block
 
+Quartz Framework의 Block은 시간을 기반으로 생성됩니다. 예를 들어
+
+`t0 = 1533188820`이고, `t1 = 1533188880`일 때, 이 차는 `60` 입니다. Block Interval이 `60`일 때,
+
+`Block N`의 `Block ID`는 다음과 같습니다.
+
+```JavaScript
+const BlockN = sha3(1533188820, 1533188880);
+// 5be5f4b80c53d318921141c9e754d0fbe79928784a4b3590225d3c4c5c85b2cf
+```
+
+이때 `Block N+1`의 `Block ID`는 다음과 같습니다.
+
+```JavaScript
+const BlockN1 = sha3(1533188880, 1533188940);
+// 8dc244aedf24855a89b4dabfc598110578ab546966a16069ab77856eea7e08e4
+```
+
+이는 모든 Node 합의로써, Block Interval에 따라 다음과 같은 결과를 나타낼 수 있습니다.
+
+```JavaScript
+const BlockInterval = n;
+const BlockId = sha3(tn, tn + BlockInterval);
+```
+
+이는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)의 Key Block과 동일한 역할을 하지만, 선출과정을 거치지 않고, 각 시간에 따라서 `Block ID`를 생성합니다.
+
+Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 들어 `Block N`에서 Transaction이 담고 있는 발생 시점의 시간이 `1533188821` 인 경우, `Block N`의 시작 시간인 `1533188820`을 뺀 값으로 Transaction의 순서를 지정하게 됩니다.
+
+```JavaScript
+> 1533188821 - 1533188820
+1
+```
+
+<p align="center">
+  <img src="/src/001.png">
+  <br>
+  <b> Block Overview </b> - Block에 Transaction이 발생한 순서대로 포함되어 있습니다.
+</p>
+
 
 
 
@@ -94,7 +134,7 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 
 
-## Sharding
+## Sharding & Light Client
 
 
 
