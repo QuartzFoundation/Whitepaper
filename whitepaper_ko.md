@@ -160,6 +160,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
   <b> Mempool Overview 4 </b> - 그림과 같이 Validator의 투표에 따라 처리 될 Transaction을 선별하게 되며, 모든 Node가 선별된 Transaction을 처리하게 됩니다.
 </p>
 
+이 과정에서 처리되지 못한 Transaction은 해당 Time Slice에 남아서 처리될 때 까지 대기 상태로 존재합니다.
 
 
 ## Sharding & Light Client
