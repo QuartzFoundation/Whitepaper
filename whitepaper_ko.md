@@ -125,7 +125,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 <p align="center">
   <img src="/src/001.png">
   <br>
-  <b> Mempool Overview 1 </b> - Mempool에 Transaction이 발생한 순서대로 포함되어 있습니다. Transaction의 길이는 수수료의 상대적인 양을 나타냅니다.
+  <b> Mempool Overview 1 </b> - Mempool에 Transaction이 발생한 순서대로 포함되어 있습니다.
 </p>
 
 <p align="center">
@@ -144,6 +144,21 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 
 ## Proof of Stake
 
+기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받아야 합니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하도록 합니다. Quartz Framework의 모든 Transaction은 수수료를 포함하고 있으며, 이는 mempool에서 상대적인 수수료 크기를 가지게 됩니다.
+
+<p align="center">
+  <img src="/src/004.png">
+  <br>
+  <b> Mempool Overview 3 </b> - Traansaction의 길이는 수수료의 양에 따라 상대적으로 평가됩니다. 수수료가 상대적으로 많으면 높은 길이를, 상대적으로 적으면 낮은 길이를 가집니다.
+</p>
+
+모든 네트워크 이용자들은 일정한 담보금을 Smart Contract에 예치하는 것으로 Validator가 될 수 있습니다. Validator들은 전체 담보금에서 백분율화 된 투표권을 가지게 됩니다. 담보된 투표권은 Mempool의 상대적인 수수료 길이와 1:1 대입되며, 투표에 따라 검증될 Transaction 수가 달라집니다. 최대한 많은 투표가 이뤄졌을 때, 많은 Transaction을 수용할 수 있게 됩니다.
+
+<p align="center">
+  <img src="/src/005.png">
+  <br>
+  <b> Mempool Overview 4 </b> - 그림과 같이 Validator의 투표에 따라 처리 될 Transaction을 선별하게 되며, 모든 Node가 선별된 Transaction을 처리하게 됩니다.
+</p>
 
 
 
