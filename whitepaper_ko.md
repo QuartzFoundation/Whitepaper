@@ -79,7 +79,7 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 - <b> Sharding & Light Client </b> - 모든 이용자들은 특정 Smart Contract만을 추적할 수 있으며, Validator가 투표한 내역에 따라서 해당 Smart Contract의 Merkle Root를 가지고, 다른 이용자와 동기화 할 수 있습니다. 이는 이용자가 특정 Transaction만 처리하여야 하는 동기를 제공하며, 모든 Block의 데이터 복제는 이용자들 사이에 분산되어 있습니다.
 
-- <b> Own Cryptoeconomy </b> - 각 DApp을 이용하기 위해서 발행된 Token을 Transaction 수수료로 지불하고, Validator는 수수료를 얻기 위해서 Block에 투표하게 됩니다. Validator는 담보된 Token에 따라 투표권을 얻으며, 전체 투표량에 따라 Transaction이 처리됩니다. 이는 일종의 Transaction 수수료 옥션입니다. Transaction을 생성하는 이용자들은 최저한의 수수료를 베팅하고, Validator들은 이 수수료를 취하기 위해서 최대한 투표를 진행하게 됩니다. 투표가 100%에 가까워지면 모든 Transaction의 수수료를 취할 수 있으며, 반대로 투표가 0%에 가깝다면 수수료를 취할 수 없을 것입니다. 이는 장기적으로 보았을 때, 0과 1로 나뉘는 수수료 옥션 게임이 될 것입니다.
+- <b> Own Cryptoeconomy </b> - 각 DApp을 이용하기 위해서 발행된 Token을 Transaction 수수료로 지불하고, Validator는 수수료를 얻기 위해서 Block에 투표하게 됩니다. Validator는 담보된 Token에 따라 투표권을 얻으며, 전체 투표량에 따라 Transaction이 처리됩니다. 이는 일종의 Transaction 수수료 확률 게임입니다. Transaction을 생성하는 이용자들은 최저한의 수수료를 베팅하고, Validator들은 이 수수료를 취하기 위해서 최대한 투표를 진행하게 됩니다. 투표가 100%에 가까워지면 모든 Transaction의 수수료를 취할 수 있으며, 반대로 투표가 0%에 가깝다면 수수료를 취할 수 없을 것입니다. 만약 Transaction을 빠르게 처리하기 위해서 많은 수수료를 제출할 것이고, 이는 Transaction의 빠른 최종성을 보장하게 됩니다. 이러한 게임은 장기적으로 0과 1로 나뉘는 수수료 확률 게임이 될 것입니다.
 
 - <b> WhiteLabel Wallet </b> - Quartz Framework는 Ethereum상의 ERC-20 Token별로 Network를 생성할 수 있으며, 그에 따라서 Whitelabel Wallet들을 제공할 수 있습니다. 이 Whitelabel Wallet은 각 Mobile OS별로 제공되며, Transaction 수수료를 Token으로 지불합니다.
 
