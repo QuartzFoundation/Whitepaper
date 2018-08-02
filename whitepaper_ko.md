@@ -125,9 +125,20 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 <p align="center">
   <img src="/src/001.png">
   <br>
-  <b> Block Overview </b> - Block에 Transaction이 발생한 순서대로 포함되어 있습니다.
+  <b> Mempool Overview 1 </b> - Mempool에 Transaction이 발생한 순서대로 포함되어 있습니다. Transaction의 길이는 수수료의 상대적인 양을 나타냅니다.
 </p>
 
+<p align="center">
+  <img src="/src/002.png">
+  <br>
+  <b> Mempool Overview 2 </b> - Mempool의 Transaction이 같은 순서에 중복되는 경우에 병렬적으로 Slot이 생성됩니다.
+</p>
+
+<p align="center">
+  <img src="/src/003.png">
+  <br>
+  <b> Block Overview </b> - Block에 Transaction이 발생한 순서대로 포함되어 있습니다.
+</p>
 
 
 
