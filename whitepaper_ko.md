@@ -104,11 +104,13 @@ const BlockN1 = sha3(1533188880, 1533188940);
 // 8dc244aedf24855a89b4dabfc598110578ab546966a16069ab77856eea7e08e4
 ```
 
-이는 모든 Node 합의로써, Block Interval에 따라 다음과 같은 결과를 나타낼 수 있습니다.
+이는 모든 Node 합의로써, 결정적인 Block Interval에 따라 다음과 같은 결과를 나타낼 수 있습니다.
 
 ```JavaScript
 const BlockInterval = n;
-const BlockId = sha3(tn, tn + BlockInterval);
+const t0 = 1533188820;
+const t1 = t0 + BlockInterval;
+const BlockId = sha3(t0, t1);
 ```
 
 이는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)의 Key Block과 동일한 역할을 하지만, 선출과정을 거치지 않고, 각 시간에 따라서 `Block ID`를 생성합니다.
