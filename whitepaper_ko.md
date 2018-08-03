@@ -13,7 +13,7 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 이 문서는 Blockchain의 초당 Transaction 처리 속도를 극도로 끌어올리며, 경제적인 모델을 도입하여 합리적인 수수료를 지불할 수 있는 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표에 따라 Transaction 처리량이 변동되며 따라서 Validator들이 받게 되는 수수료를 달리 하는 것으로 네트워크를 자율적으로 작동하게끔 합니다.
 
-이 Framework는 Ethereum과 통합되어 Smart Contract의 작동을 병렬적으로 처리하며, Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
+이 Framework는 Ethereum[[1]](https://github.com/ethereum/wiki/wiki/White-Paper)과 통합되어 Smart Contract의 작동을 병렬적으로 처리하며, Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
 
 
 ## Background
@@ -73,7 +73,7 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 위와 같은 이유로 Quartz Framework를 구현하려고 하며, 이는 다음과 같은 기능을 제공하여 최종 사용자에게 극도로 최적화된 사용자 경험을 제공
 
-- <b> Time based Block </b> - 현재 존재하는 많은 Consensus Algorithm은 일종의 대표자를 선출하여 Block을 생성하게 합니다. Quartz Framework는 대표자를 선출하게 하지 않고 이미 물리적으로 존재하며, 비 가역적인 시간을 이용하여 Block을 생성합니다. 모든 참여 Node는 해당 시간 간극만큼 주기적으로 Block을 추적하고 Transaction을 Block에 담게 됩니다. 이는 일종의 Key Block을 생성하고, 이후에 Micro Block을 모으는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)와 유사합니다. 다만 NG의 Election 과정이 시간에 의해 존재하지 않게 되었고, Block n은 시간을 표방하기 때문에, 즉각적인 최종성을 획득할 수 있습니다.
+- <b> Time based Block </b> - 현재 존재하는 많은 Consensus Algorithm은 일종의 대표자를 선출하여 Block을 생성하게 합니다. Quartz Framework는 대표자를 선출하게 하지 않고 이미 물리적으로 존재하며, 비 가역적인 시간을 이용하여 Block을 생성합니다. 모든 참여 Node는 해당 시간 간극만큼 주기적으로 Block을 추적하고 Transaction을 Block에 담게 됩니다. 이는 일종의 Key Block을 생성하고, 이후에 Micro Block을 모으는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)와 유사합니다. 다만 Bitcoin-NG의 선출 과정이 시간에 의해 존재하지 않게 되었고, Block은 시간을 표방하기 때문에, 즉각적인 최종성을 획득할 수 있습니다.
 
 - <b> Proof of Stake </b> - Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 Block에 66.7% 이상의 투표율을 가져야 Block이 최종성을 띠며 네트워크가 공격에 대한 저항성이 생깁니다. 모든 Validator는 시간을 기반으로하는 Block에 투표를 할 뿐이며, 모든 이용자들은 투표 내역에 따라서 Transaction을 개별적으로 처리하게 됩니다.
 
@@ -160,15 +160,43 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
   <b> Mempool Overview 4 </b> - 그림과 같이 Validator의 투표에 따라 처리 될 Transaction을 선별하게 되며, 모든 Node가 선별된 Transaction을 처리하게 됩니다.
 </p>
 
-이 과정에서 처리되지 못한 Transaction은 해당 Time Slice에 남아서 처리될 때 까지 대기 상태로 존재합니다.
+수수료가 낮거나, 투표율이 수수료 높이에 도달하지 못하여 처리되지 못한 Transaction은 해당 Time Slice에 남아, 처리될 때 까지 대기 상태로 존재합니다. 
+
+Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.41841)을 통해서 모든 Node와 동기화 되는데, `Block Interval * 3`에 달하는 시간을 `Epoch Time`으로 제공하므로, 모든 네트워크 이용자들은 동일한 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 가지게 될 것입니다. 또한 모든 Validator들은 Full Node로 작동하므로, 모든 Transaction을 통한 상태 변경을 가지고 있어야 합니다.
+
+<p align="center">
+  <img src="/src/006.png">
+  <br>
+  <b> Merkle Root </b> - 여기에서 투표에 따라 수수료가 낮은 Transaction은 포함하지 않고, 상회하는 Transaction만 모든 이용자가 처리하여 Merkle Root를 계산 함.
+</p>
 
 
 ## Sharding & Light Client
 
+Quart Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Validator의 투표에 따른 변동적인 Transaction 수용량을 기반으로 Merkle Root가 갱신됩니다. 그래서 모든 네트워크 이용자는 선택한 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
 
+각 Smart Contract 별로 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
+
+```JavaScript
+{
+  Id: [ Transaction ID ];
+  From: [ Sender Address ];
+  To: [ Recipient Address ];
+  Value: [ Token Amount ];
+  Data: [ Some Data eg. Smart Contract Excute code ];
+  Time: [ Unix Time ];
+  Nonce: [ Counter ];
+  Sig: [ Signature Data ];
+}
+```
+<p align="center">
+  <b> Transaction Structure </b> - Transaction은 다음과 같은 구조로 이뤄져 있습니다. 특이점으로 Unix Time을 사용하며, 이 시간은 현재의 Block Time 보다 과거 또는 미래에 존재한다 하더라도, 무방합니다. 다만 미래의 시간으로 설정된 경우에는, 해당 Transaction이 미래의 시간 이후에 처리 되어야 합니다.
+</p>
 
 
 ## Citations
-- [[1]](http://) "" http://
+- [[1]](https://github.com/ethereum/wiki/wiki/White-Paper) "Ethereum White Paper" https://github.com/ethereum/wiki/wiki/White-Paper
 - [[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf) "Bitcoin-NG: A Scalable Blockchain Protocol" https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf
 - [[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf) "Practical Byzantine Fault Tolerance" http://pmg.csail.mit.edu/papers/osdi99.pdf
+- [[4]](https://dl.acm.org/citation.cfm?doid=41840.41841) "Epidemic algorithms for replicated database maintenance" https://dl.acm.org/citation.cfm?doid=41840.41841
+- [[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32) "A Digital Signature Based on a Conventional Encryption Function" https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32
