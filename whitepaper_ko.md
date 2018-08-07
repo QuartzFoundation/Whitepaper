@@ -81,7 +81,7 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 - <b> Own Cryptoeconomy </b> - 각 DApp을 이용하기 위해서 발행된 Token을 Transaction 수수료로 지불하고, Validator는 수수료를 얻기 위해서 Block에 투표하게 됩니다. Validator는 담보된 Token에 따라 투표권을 얻으며, 전체 투표량에 따라 Transaction이 처리됩니다. 이는 일종의 Transaction 수수료 확률 게임입니다. Transaction을 생성하는 이용자들은 최저한의 수수료를 베팅하고, Validator들은 이 수수료를 취하기 위해서 최대한 투표를 진행하게 됩니다. 투표가 100%에 가까워지면 모든 Transaction의 수수료를 취할 수 있으며, 반대로 투표가 0%에 가깝다면 수수료를 취할 수 없을 것입니다. 만약 Transaction을 빠르게 처리하기 위해서 많은 수수료를 제출할 것이고, 이는 Transaction의 빠른 최종성을 보장하게 됩니다. 이러한 게임은 장기적으로 0과 1로 나뉘는 수수료 확률 게임이 될 것입니다.
 
-- <b> WhiteLabel Wallet </b> - Quartz Framework는 Ethereum상의 ERC-20 Token별로 Network를 생성할 수 있으며, 그에 따라서 Whitelabel Wallet들을 제공할 수 있습니다. 이 Whitelabel Wallet은 각 Mobile OS별로 제공되며, Transaction 수수료를 Token으로 지불합니다.
+- <b> WhiteLabel Software Development Kit </b> - Quartz Framework는 Ethereum상의 ERC-20 Token별로 Network를 생성할 수 있으며, 그에 따라서 Whitelabel SDK들을 제공할 수 있습니다. 이 Whitelabel SDK은 각 Mobile OS별로 제공되며, Transaction 수수료를 네트워크에 배포된 Token으로 지불합니다.
 
 
 ## Time based Block
@@ -178,26 +178,36 @@ Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.sp
 <p align="center">
   <img src="/src/007.png">
   <br>
-  <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다.
+  <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다. Block Merkle Root는 Entropy의 증가점이기 때문에, 난수로 사용될 수 있습니다.
 </p>
 
 각 Smart Contract에 따라 평가되는 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
 
 ```JavaScript
 {
-  Id: [ Transaction ID ];
-  From: [ Sender Address ];
-  To: [ Recipient Address ];
-  Value: [ Token Amount ];
-  Data: [ Some Data eg. Smart Contract Excute code ];
-  Time: [ Unix Time ];
-  Nonce: [ Counter ];
-  Sig: [ Signature Data ];
+  Id: [ Transaction ID ],
+  From: [ Sender Address ],
+  To: [ Recipient Address ],
+  Value: [ Token Amount ],
+  Data: [ EVM Excute code ],
+  GasPrice: [ Token Amount ],
+  Time: [ Unix Time ],
+  Nonce: [ Counter ],
+  Sig: [ Signature Data ],
 }
 ```
 <p align="center">
   <b> Transaction Structure </b> - Transaction은 다음과 같은 구조로 이뤄져 있습니다. 특이점으로 Unix Time을 사용하며, 이 시간은 현재의 Block Time 보다 과거 또는 미래에 존재한다 하더라도, 무방합니다. 다만 미래의 시간으로 설정된 경우에는, 해당 Transaction이 미래의 시간 이후에 처리 되어야 합니다.
 </p>
+
+
+## Crypto Economy & Whitelabel SDK
+
+모든 최종 사용자들은 개인키와 공개키를 관리하지 않아야하고, Transaction 수수료를 지불하기 위해서 Ether를 소지하지 않아야 합니다. 다만 네트워크를 이용하기 위한 이용료로, 네트워크에 배포된 Token을 수수료로 지불하여야 합니다. Token을 수수료로 지불하는 것은 서비스를 이용하기 위한 당연한 조치입니다.
+
+이용자들은 일정한 수수료를 지불하여 서비스를 이용합니다. Validator들은 최대한의 투표를 통해서 수수료를 얻을 것이기 때문에, Transaction이 아주 소량의 수수료를 지불하더라도 처리될 것입니다.
+
+또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
 
 
 ## Citations
