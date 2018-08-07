@@ -171,11 +171,17 @@ Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.4
 </p>
 
 
-## Sharding & Light Client
+## Sharding
 
 Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Validator의 투표에 따른 변동적인 Transaction 수용량을 기반으로 Merkle Root가 갱신됩니다. 그래서 모든 네트워크 이용자는 선택한 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
 
-각 Smart Contract 별로 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
+<p align="center">
+  <img src="/src/007.png">
+  <br>
+  <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다.
+</p>
+
+각 Smart Contract에 따라 평가되는 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
 
 ```JavaScript
 {
