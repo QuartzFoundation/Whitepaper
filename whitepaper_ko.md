@@ -184,8 +184,8 @@ Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.sp
 각 Smart Contract에 따라 평가되는 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
 
 ```JavaScript
+// TxHash = keccak256(...);
 {
-  Id: [ Transaction ID ],
   From: [ Sender Address ],
   To: [ Recipient Address ],
   Value: [ Token Amount ],
