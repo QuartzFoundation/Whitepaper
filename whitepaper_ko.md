@@ -170,10 +170,12 @@ Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.4
   <b> Merkle Root </b> - 여기에서 투표에 따라 수수료가 낮은 Transaction은 포함하지 않고, 상회하는 Transaction만 모든 이용자가 처리하여 Merkle Root를 계산 함.
 </p>
 
+Validator는 Transaction을 전달받은 경우에 투표를 진행합니다. 전달받지 않은 경우에 투표를 진행하지 않으며, 빈 Block을 생성하지 않습니다.
+
 
 ## Sharding
 
-Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Validator의 투표에 따른 변동적인 Transaction 수용량을 기반으로 Merkle Root가 갱신됩니다. 그래서 모든 네트워크 이용자는 선택한 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
+Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태를 변경하는데 있어 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Merkle Tree를 가질 때, Validator의 투표에 따라 변동적인 Transaction 수용량을 가지기 때문에, Smart Contract별로 Merkle Root를 가지도록 합니다. 모든 네트워크 이용자는 관찰하고자 하는 특정 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
 
 <p align="center">
   <img src="src/007.png">
@@ -181,7 +183,21 @@ Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.sp
   <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다. Block Merkle Root는 Entropy의 증가점이기 때문에, 난수로 사용될 수 있습니다.
 </p>
 
-각 Smart Contract에 따라 평가되는 상대적인 수수료 길이가 각각 다르기 때문에 Contract의 연산량에 따라 수수료가 지불되는 양이 다를 수 있습니다.
+모든 Transaction은 각 대상, 즉 Smart Contract 또는 이용자의 공개키가 되며, 각각 Merkle Tree를 가지기 때문에 추적 가능한 대상이 됩니다. 
+
+
+## Crypto Economy & Whitelabel SDK
+
+모든 최종 사용자들은 개인키와 공개키를 관리하지 않아야하고, Transaction 수수료를 지불하기 위해서 Ether를 소지하지 않아야 합니다. 다만 네트워크를 이용하기 위한 이용료로, 네트워크에 배포된 Token을 수수료로 지불하여야 합니다. Token을 수수료로 지불하는 것은 서비스를 이용하기 위한 당연한 조치입니다.
+
+이용자들은 일정한 수수료를 지불하여 서비스를 이용합니다. Validator들은 최대한의 투표를 통해서 수수료를 얻을 것이기 때문에, Transaction이 아주 소량의 수수료를 지불하더라도 처리될 것입니다.
+
+이러한 점은 네트워크를 유지하는 보상을 자체적인 자산으로 지불하도록 하여, 가치가 별도의 네트워크를 통해서 창출될 수 있다는 점입니다. 상대적으로 사용성이 떨어지거나, 인기가 없는 네트워크는 자연적으로 도태되어 사라지게 될 것입니다.
+
+또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
+
+
+## Blueprint
 
 ```JavaScript
 // TxHash = keccak256(...);
@@ -197,17 +213,33 @@ Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.sp
 }
 ```
 <p align="center">
-  <b> Transaction Structure </b> - Transaction은 다음과 같은 구조로 이뤄져 있습니다. 특이점으로 Unix Time을 사용하며, 이 시간은 현재의 Block Time 보다 과거 또는 미래에 존재한다 하더라도, 무방합니다. 다만 미래의 시간으로 설정된 경우에는, 해당 Transaction이 미래의 시간 이후에 처리 되어야 합니다.
+  <b> Transaction </b> - 특징으로 Unix Time을 사용하며, 이 시간은 현재의 Block Time 보다 과거 또는 미래에 존재한다 하더라도, 무방합니다. 다만 미래의 시간으로 설정된 경우에는, 해당 Transaction이 미래의 시간 이후에 처리 되어야 합니다.
 </p>
 
+```JavaScript
+// VoteHash = keccak256(...);
+{
+  From: [ Sender Address ],
+  Target: [ Block Hash ],
+  Sig: [ Signature Data ],
+}
+```
+<p align="center">
+  <b> Vote Transaction </b> - 이는 Validator가 발생시킬 수 있는 특별한 Transaction 입니다.
+</p>
 
-## Crypto Economy & Whitelabel SDK
-
-모든 최종 사용자들은 개인키와 공개키를 관리하지 않아야하고, Transaction 수수료를 지불하기 위해서 Ether를 소지하지 않아야 합니다. 다만 네트워크를 이용하기 위한 이용료로, 네트워크에 배포된 Token을 수수료로 지불하여야 합니다. Token을 수수료로 지불하는 것은 서비스를 이용하기 위한 당연한 조치입니다.
-
-이용자들은 일정한 수수료를 지불하여 서비스를 이용합니다. Validator들은 최대한의 투표를 통해서 수수료를 얻을 것이기 때문에, Transaction이 아주 소량의 수수료를 지불하더라도 처리될 것입니다.
-
-또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
+```JavaScript
+// BlockHash = keccak256(...);
+{
+  Before: [ Before Block Hash ],
+  StartTime: [ Unix Time ],
+  EndTime: [ Unix Time ],
+  Data: [ Merkle Tree ],
+}
+```
+<p align="center">
+  <b> Block </b> - 이전 Block Hash를 기반으로, 새로운 Block을 생성합니다. 이 과정에서 같은 라운드에서 여러 Block Hash가 발생할 수 있으나, 이는 최종적으로 GHOST Protocol[[6]](https://eprint.iacr.org/2013/881.pdf)에 의해서 투표가 병합됩니다.
+</p>
 
 
 ## Citations
@@ -216,3 +248,5 @@ Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.sp
 - [[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf) "Practical Byzantine Fault Tolerance" http://pmg.csail.mit.edu/papers/osdi99.pdf
 - [[4]](https://dl.acm.org/citation.cfm?doid=41840.41841) "Epidemic algorithms for replicated database maintenance" https://dl.acm.org/citation.cfm?doid=41840.41841
 - [[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32) "A Digital Signature Based on a Conventional Encryption Function" https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32
+
+- [[6]](https://eprint.iacr.org/2013/881.pdf) "Secure High-Rate Transaction Processing in Bitcoin" https://eprint.iacr.org/2013/881.pdf
