@@ -123,19 +123,19 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 ```
 
 <p align="center">
-  <img src="/src/001.png">
+  <img src="src/001.png">
   <br>
   <b> Mempool Overview 1 </b> - Mempool에 Transaction이 발생한 순서대로 포함되어 있습니다.
 </p>
 
 <p align="center">
-  <img src="/src/002.png">
+  <img src="src/002.png">
   <br>
   <b> Mempool Overview 2 </b> - Mempool의 Transaction이 같은 순서에 중복되는 경우에 병렬적으로 Slot이 생성됩니다.
 </p>
 
 <p align="center">
-  <img src="/src/003.png">
+  <img src="src/003.png">
   <br>
   <b> Block Overview </b> - Block에 Transaction이 발생한 순서대로 포함되어 있습니다.
 </p>
@@ -147,7 +147,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받아야 합니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하도록 합니다. Quartz Framework의 모든 Transaction은 수수료를 포함하고 있으며, 이는 mempool에서 상대적인 수수료 크기를 가지게 됩니다.
 
 <p align="center">
-  <img src="/src/004.png">
+  <img src="src/004.png">
   <br>
   <b> Mempool Overview 3 </b> - Traansaction의 길이는 수수료의 양에 따라 상대적으로 평가됩니다. 수수료가 상대적으로 많으면 높은 길이를, 상대적으로 적으면 낮은 길이를 가집니다.
 </p>
@@ -155,7 +155,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 모든 네트워크 이용자들은 일정한 담보금을 Smart Contract에 예치하는 것으로 Validator가 될 수 있습니다. Validator들은 전체 담보금에서 백분율화 된 투표권을 가지게 됩니다. 담보된 투표권은 Mempool의 상대적인 수수료 길이와 1:1 대입되며, 투표에 따라 검증될 Transaction 수가 달라집니다. 최대한 많은 투표가 이뤄졌을 때, 많은 Transaction을 수용할 수 있게 됩니다.
 
 <p align="center">
-  <img src="/src/005.png">
+  <img src="src/005.png">
   <br>
   <b> Mempool Overview 4 </b> - 그림과 같이 Validator의 투표에 따라 처리 될 Transaction을 선별하게 되며, 모든 Node가 선별된 Transaction을 처리하게 됩니다.
 </p>
@@ -165,7 +165,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.41841)을 통해서 모든 Node와 동기화 되는데, `Block Interval * 3`에 달하는 시간을 `Epoch Time`으로 제공하므로, 모든 네트워크 이용자들은 동일한 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 가지게 될 것입니다. 또한 모든 Validator들은 Full Node로 작동하므로, 모든 Transaction을 통한 상태 변경을 가지고 있어야 합니다.
 
 <p align="center">
-  <img src="/src/006.png">
+  <img src="src/006.png">
   <br>
   <b> Merkle Root </b> - 여기에서 투표에 따라 수수료가 낮은 Transaction은 포함하지 않고, 상회하는 Transaction만 모든 이용자가 처리하여 Merkle Root를 계산 함.
 </p>
@@ -176,7 +176,7 @@ Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.4
 Quartz Framework는 배포된 Smart Contract가 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Validator의 투표에 따른 변동적인 Transaction 수용량을 기반으로 Merkle Root가 갱신됩니다. 그래서 모든 네트워크 이용자는 선택한 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
 
 <p align="center">
-  <img src="/src/007.png">
+  <img src="src/007.png">
   <br>
   <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다. Block Merkle Root는 Entropy의 증가점이기 때문에, 난수로 사용될 수 있습니다.
 </p>
