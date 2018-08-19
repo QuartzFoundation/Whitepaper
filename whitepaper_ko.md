@@ -11,14 +11,14 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 ## Abstract
 
-이 문서는 Blockchain의 초당 Transaction 처리 속도를 극도로 끌어올리며, 경제적인 모델을 도입하여 합리적인 수수료를 지불할 수 있는 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표에 따라 Transaction 처리량이 변동되며 따라서 Validator들이 받게 되는 수수료를 달리 하는 것으로 네트워크를 자율적으로 작동하게끔 합니다.
+이 문서는 Blockchain의 초당 Transaction 처리 속도를 자체적인 경제 모델과 연계한 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표량에 따라 Validator들이 받게되는 수수료를 달리 하는 것으로, Transaction 처리량을 극도로 끌어올리고 네트워크를 자율적으로 작동하게 합니다.
 
-이 Framework는 Ethereum[[1]](https://github.com/ethereum/wiki/wiki/White-Paper)과 통합되어 Smart Contract의 작동을 병렬적으로 처리하며, Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
+또한 이 Framework는 Ethereum[[1]](https://github.com/ethereum/wiki/wiki/White-Paper)상에서 구현되어 작동되나, 이용자들은 Transaction 수수료를 Ether로 지불하지 않고 자체적인 Token을 이용하여 수수료를 납부하게 됩니다. 이러한 작동방식에 따라 Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
 
 
 ## Background
 
-Blockchain Network는 Block의 용량적 제한 그리고 처리 단위에 대한 제한으로, 전 세계에서 동시 다발 적으로 발생하는 Transaction을 다수 처리할 수 없으며, 그 마저도 Transaction에 포함된 수수료가 높은 순서대로 처리됩니다.
+현재의 Blockchain은 Block의 용량적 제한 그리고 처리 단위에 대한 제한으로, 전 세계에서 동시 다발 적으로 발생하는 Transaction을 다수 처리할 수 없으며, 그 마저도 Transaction에 포함된 수수료가 높은 순서대로 처리됩니다.
 
 이러한 상황에서 Transaction 처리 비율을 높이기 위해 GHOST Protocol이 도입되지만, 현재의 Proof of Work Consensus 상에서 Transaction을 처리하기 위한 커다란 요인이 되지 못합니다.
 
@@ -86,21 +86,21 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 ## Time based Block
 
-Quartz Framework의 Block은 시간을 기반으로 생성됩니다. 예를 들어
+Quartz Framework의 모든 Node는 Block생성할 수 있으며, Block은 네트워크의 시작시간으로 부터 일정한 시간 간격만큼 지속적으로 생성됩니다.
 
-`t0 = 1533188820`이고, `t1 = 1533188880`일 때, 이 차는 `60` 입니다. Block Interval이 `60`일 때,
+Block Interval이 `60`일 때, `t0 = 1533188820`이고, `t1 = 1533188880`인 경우, 이 차는 `60` 입니다.
 
 `Block N`의 `Block ID`는 다음과 같습니다.
 
 ```JavaScript
-const BlockN = sha3(1533188820, 1533188880);
+const Block = sha3(1533188820, 1533188880);
 // 5be5f4b80c53d318921141c9e754d0fbe79928784a4b3590225d3c4c5c85b2cf
 ```
 
 이때 `Block N+1`의 `Block ID`는 다음과 같습니다.
 
 ```JavaScript
-const BlockN1 = sha3(1533188880, 1533188940);
+const Block = sha3(1533188880, 1533188940);
 // 8dc244aedf24855a89b4dabfc598110578ab546966a16069ab77856eea7e08e4
 ```
 
@@ -113,9 +113,13 @@ const t1 = t0 + BlockInterval;
 const BlockId = sha3(t0, t1);
 ```
 
-이는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)의 Key Block과 동일한 역할을 하지만, 선출과정을 거치지 않고, 각 시간에 따라서 `Block ID`를 생성합니다.
+이는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)의 Key Block과 동일한 역할을 하지만, 선출과정을 거치지 않고, 일정한 시간에 따라서 `Block ID`를 생성합니다.
 
-Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 들어 `Block N`에서 Transaction이 담고 있는 발생 시점의 시간이 `1533188821` 인 경우, `Block N`의 시작 시간인 `1533188820`을 뺀 값으로 Transaction의 순서를 지정하게 됩니다.
+이러한 Key Block에는 Transaction이 담겨있지 않습니다. 모든 Transaction에는 발생 시간과, 기반이 되는 Block을 기록하여 발생되며, Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.41841)을 통해서 모든 Node가 동일한 Transaction을 가지도록 합니다.
+
+이후에 Validator들의 투표에 의해 Node들은 Snapshot 하게 될 Transaction을 결정할 수 있게됩니다.
+
+Node들이 가지게 될 Transaction의 순서는 아래 방법으로 결정됩니다. 예를 들어 `Block N`에서 Transaction이 담고 있는 발생 시점의 시간이 `1533188821` 인 경우, `Block N`의 시작 시간인 `1533188820`을 뺀 값으로 Transaction의 순서를 지정하게 됩니다.
 
 ```JavaScript
 > 1533188821 - 1533188820
@@ -144,7 +148,7 @@ Transaction의 순서는 다음과 같은 방법으로 결정됩니다. 예를 �
 
 ## Proof of Stake
 
-기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받아야 합니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하도록 합니다. Quartz Framework의 모든 Transaction은 수수료를 포함하고 있으며, 이는 mempool에서 상대적인 수수료 크기를 가지게 됩니다.
+기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받아야 합니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하도록 합니다. Quartz Framework의 모든 Transaction은 수수료를 포함하고 있으며, 이는 Mempool에서 상대적인 수수료 크기를 가지게 됩니다.
 
 <p align="center">
   <img src="src/004.png">
@@ -208,6 +212,7 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
   Data: [ EVM Excute code ],
   GasPrice: [ Token Amount ],
   Time: [ Unix Time ],
+  Block: [ Transaction Based Block ],
   Nonce: [ Counter ],
   Sig: [ Signature Data ],
 }
@@ -231,10 +236,10 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
 ```JavaScript
 // BlockHash = keccak256(...);
 {
-  Before: [ Before Block Hash ],
+  Prev: [ Previous Block Hash ],
   StartTime: [ Unix Time ],
   EndTime: [ Unix Time ],
-  Data: [ Merkle Tree ],
+  Data: [ Merkle Trees ],
 }
 ```
 <p align="center">
