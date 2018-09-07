@@ -175,9 +175,9 @@ const BlockField = {
 
 이런 방식으로 모든 Node는 Block의 검증과정에 참여하게 되고, 이는 투표 증거에 의해서 모든 Node가 자율적으로 따릅니다. 이 과정에서 성능이 떨어지는 Node는 네트워크 증거를 처리하는데 있어서 지연을 겪을 것이고, 네트워크에서 탈락하게 될 것입니다. 궁극적으로 Block의 합의 비용은 낮추고, Transaction 처리 속도를 상승시킨다고 볼 수 있습니다.
 
-다만 일부 많은 Token Holder가 일부러 투표하지 않고, 높은 수수료만 취한다고 볼 수 있으나 수수료 보상은 투표자들에게만 주어지고, 일부러 많은 Token을 가지고 있다고 하더라도 투표를 하는 것이 자신의 이익에 도움이 되므로 실제로 이러한 일은 일어나지 않을 것으로 보입니다.[[7]](https://bitcoin.org/bitcoin.pdf)
-
 또한 시간의 증거에 의해서 Block이 생성되며, Block이 확정되기 위해서는 Transaction을 필요로 하므로, Transaction이 발생되지 않는 시간에는 Block이 생성되지 않습니다.
+
+이러한 검증 방법은, Private Network에서도 강점을 발휘합니다. 모든 Transaction은 Validator와 Node가 가지게 되며, 투표에 의해 대역폭에 따른 검증이 이뤄지기 때문에 검열에 대한 저항성이 존재합니다.
 
 
 ### Pseudo Random Number
@@ -199,6 +199,19 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
 이러한 점은 네트워크를 유지하는 보상을 자체적인 자산으로 지불하도록 하여, 가치가 별도의 네트워크를 통해서 창출될 수 있다는 점입니다. 상대적으로 사용성이 떨어지거나, 인기가 없는 네트워크는 자연적으로 도태되어 사라지게 될 것입니다.
 
 또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
+
+## Attack Scenario
+
+### Nothing At Stake
+
+해당 Proof of Stake를 이용한 시스템에서는 두 개의 Block이 생성되는 것이 아니라, 단순 투표에 의해서 단 하나의 Key Block만 가지기 때문에, 두 개의 Block에 투표할 일이 존재하지 않습니다.
+
+### Fee Cartel
+
+일부 Token Holder가 일부러 투표하지 않고, 높은 수수료만 취한다고 볼 수 있으나 수수료 보상은 투표자들에게만 주어지고, 일부러 많은 Token을 가지고 있다고 하더라도 투표를 하는 것이 자신의 이익에 도움이 되므로 실제로 이러한 일은 일어나지 않을 것으로 보입니다.[[7]](https://bitcoin.org/bitcoin.pdf)
+
+또한 다음 Block Round에서 상대적인 수수료 길이가 대폭 낮아질 것이기 때문에, 상대적으로 완화될 것입니다.
+
 
 ## Citations
 - [[1]](https://github.com/ethereum/wiki/wiki/White-Paper) "Ethereum White Paper" https://github.com/ethereum/wiki/wiki/White-Paper
