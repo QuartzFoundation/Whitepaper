@@ -11,52 +11,45 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 ## Abstract
 
-이 문서는 Blockchain의 초당 Transaction 처리 속도를 자체적인 경제 모델과 연계한 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework의 핵심은 투표량에 따라 Validator들이 받게되는 수수료를 달리 하는 것으로, Transaction 처리량을 극도로 끌어올리고 네트워크를 자율적으로 작동하게 합니다.
+이 문서는 Blockchain의 초당 Transaction 처리 속도를 자체적인 경제 모델과 연계한 Quartz Framework라고 불리는 프로토콜 집합체를 설명하고 있습니다. 이 Framework가 가지는 Proof of Stake는 투표량에 따라, Validator들이 받게되는 수수료를 달리 하는 경제적 구조를 통해 Transaction Bandwidth를 결정하게 합니다. 
 
-또한 이 Framework는 Ethereum[[1]](https://github.com/ethereum/wiki/wiki/White-Paper)상에서 구현되어 작동되나, 이용자들은 Transaction 수수료를 Ether로 지불하지 않고 자체적인 Token을 이용하여 수수료를 납부하게 됩니다. 이러한 작동방식에 따라 Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
+또한 이 Framework는 Ethereum[[1]](https://github.com/ethereum/wiki/wiki/White-Paper)과 연계되어 작동하며, 이용자들은 Transaction 수수료를 Ether로 지불하지 않고 자체적인 Token을 이용하여 행동에 대한 수수료를 납부할 수 있습니다. 이러한 작동방식에 따라 Quartz Framework를 통해 파생되는 Network들은 개별적인 Cryptoeconomy를 확립하게 됩니다.
 
 
 ## Background
 
-현재의 Blockchain은 Block의 용량적 제한 그리고 처리 단위에 대한 제한으로, 전 세계에서 동시 다발 적으로 발생하는 Transaction을 다수 처리할 수 없으며, 그 마저도 Transaction에 포함된 수수료가 높은 순서대로 처리됩니다.
+현재의 Blockchain은 Block의 용량적 제한 그리고 처리 단위에 대한 제한으로 전 세계에서 동시 다발 적으로 발생하는 Transaction을 다수 처리할 수 없으며, 현재 처리되는 Transaction은 수수료가 높은 순서대로 처리됩니다.
 
-이러한 상황에서 Transaction 처리 비율을 높이기 위해 GHOST Protocol이 도입되지만, 현재의 Proof of Work Consensus 상에서 Transaction을 처리하기 위한 커다란 요인이 되지 못합니다.
+이러한 상황에서 Transaction 처리 비율과 네트워크의 안정성 향상을 위해서 GHOST Protocol[[7]]()이 도입되지만, 현재의 Proof of Work에서 Transaction을 병렬적으로 처리하기 위한 주 요인이 되지 못합니다.
 
-Blockchain은 기본적으로 많은 이용자들의 공용 플랫폼입니다. Initial Coin Offering 과 같은 이벤트는 Transaction 수수료가 자연스럽게 상승하게 되는 주 요인이며, 이러한 이벤트에 참여하지 않는 다수의 이용자들은 갑작스럽게 상승한 Transaction 수수료를 따라야 합니다.
+Blockchain은 다양한 이용자들이 사용하는 공용 플랫폼이며, 다수의 Transaction이 발생합니다. 이러한 Transaction은 제한된 크기의 Block에 담겨야 처리된 것으로 간주합니다. Initial Coin Offering과 같은 이벤트가 Blockchain에서 발생하는 경우, Block에 Transaction을 포함하기 위해 전체적으로 Transaction 수수료가 상승하게 됩니다. 이러한 이벤트에 참여하지 않는 다수의 이용자들도 평균적으로 상승하는 수수료에 맞춰 지불하게 됩니다.
 
-Smart Contract의 발전으로 다양한 Token이 Blockchain 상에서 발행 되었으며, Token들은 이용 방법과 가치가 각각 다릅니다. 하지만 이러한 Token을 전송하거나 이용할 때는 주 Blockchain이 제공하는 Coin을 이용하여 Transaction 수수료를 지불하여야 하는 단점이 존재합니다.
-
-이러한 문제들은 최근까지도 지속적으로 이뤄지고 있으며, 이 문서에서는 위와 같은 상황들에 대한 해결 방법이 되고자 작성되었습니다.
+Blockchain 상에서 다양한 자산들이 Token 형태로 발행되었으며, 이것들은 Coin과 다르게 이용 방법과 가치가 각각 다릅니다. 하지만 이러한 Token을 전송하거나, 이용할 때는 주 Blockchain이 제공하는 Coin을 이용하여 Transaction 수수료를 지불하여야 하는 단점이 존재합니다. [EIP-865](https://github.com/ethereum/EIPs/issues/865)이나 [EIP-1077](https://eips.ethereum.org/EIPS/eip-1077)은 Token을 Transaction 수수료로 지불할 수 있도록 하였으나, 이는 근본적으로 타인을 통한 Transaction 처리이기 때문에 근본적인 해결 방법은 되지 못합니다.
 
 
 ## Introduction
 
 Ethereum과 Bitcoin을 비롯하여 Blockchain은 상태를 저장하고, 변경의 기록을 Block에 담아 모든 Peer to Peer 네트워크를 통해 참여자들이 동일하게 가지게 됩니다. 또한 Smart Contract의 발전으로 Blockchain의 상태 변경을 프로그램 할 수 있게 되었고, 이를 통해서 중재자 없는 다양한 서비스들이 세상에 나올 수 있게 되었습니다.
 
-하지만 이 모든 서비스들의 Transaction을 처리하기에는 Blockchain이 수용할 수 있는 초당 Transaction 수가 너무 낮다는 것이 문제입니다. 이러한 Blockchain의 Scalability를 On-chain에서 처리하는 것은 너무 많은 대기 시간을 요구합니다.
+하지만 이 모든 서비스들의 Transaction을 처리하기에는 Blockchain이 수용할 수 있는 초당 Transaction 처리 수가 너무 낮다는 것이 문제입니다. Blockchain의 Scalability를 해결하는 것은 너무 오랜 연구시간을 요구합니다.
 
-보통 Block 보상으로 주어지는 암호화폐를 Coin, Blockchain을 기반으로 만들어진 암호화폐를 Token이라 부르는데, 또한 Decentralized Application(이하 DApp)을 작동 시키기 위해서 Transaction 수수료로 Coin을 사용하게 됩니다.
+Block 보상으로 채굴자에게 주어지는 암호 화폐를 Coin, Blockchain을 기반으로 만들어진 암호 화폐를 Token이라 부르는데, Decentralized Application(이하 DApp)을 이용하기 위해서는 Token이 주요한 경제적 요인을 가지고 작동하게 됩니다. 하지만 이를 이용하기 위해서는 수수료로 Coin 또한 필요로 하게 됩니다.
 
-Network 또는 DApp의 가치는 실질적으로 사용하는 사람들에 의해 결정됩니다. 수수료 보다 낮은 가치를 지닌 Token을 전송하고 사용하는 경우에는 어떨까요? 많은 기능적 이익을 제공하지만, 수수료로 더욱 많은 비용을 지불한다면 가치가 보장되기 어려운 환경이 될 것입니다.
+대부분의 DApp은 Coin를 수수료로 지불하여 Token을 사용하도록 하는데, 이는 필수적으로 Coin을 필요로 한다는 문제가 있습니다. 그렇다면 상태의 전이만 처리하는 Off-chain의 경우, Coin없이 Token의 지불이 가능할 것입니다. 하지만 Off-chain은 상태가 저장되지 않고, 암호 작업에 많은 리소스를 투입하게 됩니다.
 
-예를 들어 Augur나 Aragon과 같은 DApp은 Ether를 수수료로 지불하여 Token을 사용하도록 하는데, 이는 필수적으로 Ether를 필요로 한다는 문제가 있습니다. 때문에 Transaction은 On-chain이 아닌 Off-chain에서 처리되어야 합니다. 하지만 Off-chain은 State가 저장되지 않고, 암호작업에 많은 리소스를 투입하는 것으로 상태를 유지합니다.
-
-결국이는 다음과 같은 극단으로 나뉘게 됩니다.
+결론적으로 상태의 처리에 대한 것은, 다음과 같은 극단으로 나뉘게 됩니다.
 
 * Blockchain을 통해서 전체 State를 간단히 추적하는 방법
-* 많은 암호 작업을 통해서 나와 연결된 State의 추적하는 방법
+* 많은 암호 작업을 통해서 나의 State의 추적하는 방법
 
-Quartz Framework를 생성된 Network는 기본적으로 Ethereum에 연결되어 있지만, Off-chain으로 작동합니다. 이 네트워크는 각각의 Token 또는 Wrapped Ether(이하 WETH)를 통해서 자율적인 경제 체계를 가지고, 많은 수의 Transaction을 수용할 수 있게 됩니다.
+Quartz는 이러한 극단에서 장점만을 취한 Framework입니다. 이를 통해 생성된 Network는 기본적으로 Ethereum에 연결되어 있지만, Ethereum의 Off-chain으로 작동합니다. 이 네트워크는 ERC-20 기반의 Token들을 통해서 자율적인 경제 체계를 가지고, 다수의 Transaction을 자체적으로 처리할 수 있게 됩니다.
 
 다음과 같은 사용 사례들이 존재할 수 있습니다.
 
 * 법정화폐를 기반으로 하는 Point of Sales System Network
-* DApp을 위한 Network Pool
 * Multi-Party Computation
-* Point 시스템
-* 지급 결제
 * Ticketing / Ticket Trade Platform
-* Private Network
+* Consortium Blockchain
 
 
 ## Quartz Framework
@@ -83,175 +76,135 @@ Quartz Framework는 다음과 같은 목적을 위해 연구되었습니다.
 
 - <b> WhiteLabel Software Development Kit </b> - Quartz Framework는 Ethereum상의 ERC-20 Token별로 Network를 생성할 수 있으며, 그에 따라서 Whitelabel SDK들을 제공할 수 있습니다. 이 Whitelabel SDK은 각 Mobile OS별로 제공되며, Transaction 수수료를 네트워크에 배포된 Token으로 지불합니다.
 
-
-## Time based Block
-
-Quartz Framework의 모든 Node는 Block생성할 수 있으며, Block은 네트워크의 시작시간으로 부터 일정한 시간 간격만큼 지속적으로 생성됩니다.
-
-Block Interval이 `60`일 때, `t0 = 1533188820`이고, `t1 = 1533188880`인 경우, 이 차는 `60` 입니다.
-
-`Block N`의 `Block ID`는 다음과 같습니다.
-
-```JavaScript
-const Block = sha3(1533188820, 1533188880);
-// 5be5f4b80c53d318921141c9e754d0fbe79928784a4b3590225d3c4c5c85b2cf
-```
-
-이때 `Block N+1`의 `Block ID`는 다음과 같습니다.
-
-```JavaScript
-const Block = sha3(1533188880, 1533188940);
-// 8dc244aedf24855a89b4dabfc598110578ab546966a16069ab77856eea7e08e4
-```
-
-이는 모든 Node 합의로써, 결정적인 Block Interval에 따라 다음과 같은 결과를 나타낼 수 있습니다.
-
-```JavaScript
-const BlockInterval = n;
-const t0 = 1533188820;
-const t1 = t0 + BlockInterval;
-const BlockId = sha3(t0, t1);
-```
-
-이는 Bitcoin-NG[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)의 Key Block과 동일한 역할을 하지만, 선출과정을 거치지 않고, 일정한 시간에 따라서 `Block ID`를 생성합니다.
-
-이러한 Key Block에는 Transaction이 담겨있지 않습니다. 모든 Transaction에는 발생 시간과, 기반이 되는 Block을 기록하여 발생되며, Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.41841)을 통해서 모든 Node가 동일한 Transaction을 가지도록 합니다.
-
-이후에 Validator들의 투표에 의해 Node들은 Snapshot 하게 될 Transaction을 결정할 수 있게됩니다.
-
-Node들이 가지게 될 Transaction의 순서는 아래 방법으로 결정됩니다. 예를 들어 `Block N`에서 Transaction이 담고 있는 발생 시점의 시간이 `1533188821` 인 경우, `Block N`의 시작 시간인 `1533188820`을 뺀 값으로 Transaction의 순서를 지정하게 됩니다.
-
-```JavaScript
-> 1533188821 - 1533188820
-1
-```
-
-<p align="center">
-  <img src="src/001.png">
-  <br>
-  <b> Mempool Overview 1 </b> - Mempool에 Transaction이 발생한 순서대로 포함되어 있습니다.
-</p>
-
-<p align="center">
-  <img src="src/002.png">
-  <br>
-  <b> Mempool Overview 2 </b> - Mempool의 Transaction이 같은 순서에 중복되는 경우에 병렬적으로 Slot이 생성됩니다.
-</p>
-
-<p align="center">
-  <img src="src/003.png">
-  <br>
-  <b> Block Overview </b> - Block에 Transaction이 발생한 순서대로 포함되어 있습니다.
-</p>
-
-
-
 ## Proof of Stake
-
-기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받아야 합니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하도록 합니다. Quartz Framework의 모든 Transaction은 수수료를 포함하고 있으며, 이는 Mempool에서 상대적인 수수료 크기를 가지게 됩니다.
+기존의 Proof of Stake는 Practical Byzantine Fault Tolerance[[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf)의 구현으로 전체 투표권으로 환산된 담보금의 66.7% 이상에 해당하는 투표를 받는 모델로 구현되어 있습니다. Quartz Framework의 Proof of Stake는 Validator의 극단적인 투표 참여를 독려하기 위해서 전체 투표율에 따라 수수료의 수수 비율을 달리 하는 것으로 Transaction 처리량의 대역폭을 결정하게 됩니다. Validator는 Gossip Protocol로 인해서 Transaction을 동등한 상태로 동기화 하며, 시간이 지남에 따라 이 동등한 상태에 대한 완결성은 상승하게 됩니다.
 
 <p align="center">
   <img src="src/004.png">
   <br>
-  <b> Mempool Overview 3 </b> - Traansaction의 길이는 수수료의 양에 따라 상대적으로 평가됩니다. 수수료가 상대적으로 많으면 높은 길이를, 상대적으로 적으면 낮은 길이를 가집니다.
+  <b> Figure 1 </b> - Transaction의 길이는 수수료의 양에 따라 상대적으로 평가됩니다. 수수료가 상대적으로 많으면 높은 길이를, 상대적으로 적으면 낮은 길이를 가집니다.
 </p>
 
-모든 네트워크 이용자들은 일정한 담보금을 Smart Contract에 예치하는 것으로 Validator가 될 수 있습니다. Validator들은 전체 담보금에서 백분율화 된 투표권을 가지게 됩니다. 담보된 투표권은 Mempool의 상대적인 수수료 길이와 1:1 대입되며, 투표에 따라 검증될 Transaction 수가 달라집니다. 최대한 많은 투표가 이뤄졌을 때, 많은 Transaction을 수용할 수 있게 됩니다.
+동기화된 Mempool은 위와 같이 상대적인 수수료에 기반하여 수수료가 높은 Transaction은 0에 가깝고, 낮은 Transaction은 1에 가깝게 평가됩니다. Transaction 처리 대역폭은 투표에 의해 결정되는데, 예를 들어 70%에 달하는 투표가 이뤄졌다면, 다음과 같은 대역폭이 결정됩니다.
 
 <p align="center">
   <img src="src/005.png">
   <br>
-  <b> Mempool Overview 4 </b> - 그림과 같이 Validator의 투표에 따라 처리 될 Transaction을 선별하게 되며, 모든 Node가 선별된 Transaction을 처리하게 됩니다.
+  <b> Figure 2 </b> - Validator의 투표에 따라 처리 될 Transaction을 선별하게 된다.
 </p>
 
-수수료가 낮거나, 투표율이 수수료 높이에 도달하지 못하여 처리되지 못한 Transaction은 해당 Time Slice에 남아, 처리될 때 까지 대기 상태로 존재합니다. 
+100% 투표가 이뤄지게 된다면, 현재의 Block 시간 이전에 생성된 올바른 Transaction은 모두 성공처리가 됩니다. 모든 Node는 이 투표에 대한 증거를 토대로, 자율적으로 Transaction을 검증하게 됩니다.
 
-Transaction은 Gossip Protocol[[4]](https://dl.acm.org/citation.cfm?doid=41840.41841)을 통해서 모든 Node와 동기화 되는데, `Block Interval * 3`에 달하는 시간을 `Epoch Time`으로 제공하므로, 모든 네트워크 이용자들은 동일한 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 가지게 될 것입니다. 또한 모든 Validator들은 Full Node로 작동하므로, 모든 Transaction을 통한 상태 변경을 가지고 있어야 합니다.
+### Prepare
 
-<p align="center">
-  <img src="src/006.png">
-  <br>
-  <b> Merkle Root </b> - 여기에서 투표에 따라 수수료가 낮은 Transaction은 포함하지 않고, 상회하는 Transaction만 모든 이용자가 처리하여 Merkle Root를 계산 함.
-</p>
+Quartz의 모든 Node는 현재 시간에 대한 Key Block을 생성할 수 있습니다. 이는 일종의 Bitcoin-NG의 Key Block[[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf)과 같은 역할을 하는데, 다른 점은 선출과정을 거치지 않고 시간에 대한 증거로써 Key Block을 생성할 수 있다는 점입니다.
 
-Validator는 Transaction을 전달받은 경우에 투표를 진행합니다. 전달받지 않은 경우에 투표를 진행하지 않으며, 빈 Block을 생성하지 않습니다.
+```JavaScript
+// KeyBlockId = keccak256(KeyBlockIdField);
+const KeyBlockIdField = {
+  // Genesis 이후 Block Interval*N 에 따른 시작 Unix Time
+  StartTime: uint64(UnixTime),
+  // Block Interval 이후의 Unix Time
+  EndTime: uint64(UnixTime),
+  // Network Id에 종속된 KeyBlockId 생성 유도
+  NetworkId: string(Hash),
+  // 이전 Block에 대한 Id를 참조로 가짐
+  PrevBlockId: string(Hash)
+}
+```
+
+이러한 KeyBlockId는 Validator가 현재 시간대의 투표 증거로 사용할 수 있으며, Node가 Transaction을 발생 시킬 때, 특정 Block을 기점으로 작동할 수 있도록 Trigger 역할을 수행합니다. 이러한 Key Block에는 Transaction이 담겨있지 않으며, 단순 증거로 사용됩니다.
+
+### Vote
+
+Validator는 Quartz의 System Contract에 Token을 예치하는 것으로 될 수 있습니다. 이 System Contract는 Ethereum 상에서 배포되며 배포된 Contract의 ID는 NetworkId 가 되며, Smart Contract에 기록된 시간은 Quartz 기반 Network의 Genesis KeyBlockId가 됩니다.
+
+Validator는 다음과 같은 증거로 해당 시간대에 투표하게 됩니다.
+
+```JavaScript
+// VoteId = keccak256(VoteField);
+const VoteField = {
+  // 목표가 되는 시간대의 Key Block Id
+  KeyBlockID: string(Hash),
+  // 어떤 공개키로 부터 해당 투표가 발생되었는지
+  From: string(Hash),
+  // 공개키에 대입되는 비밀키 서명
+  Sig: string(Hash)
+}
+```
+
+Validator는 위에서 보는 Vote를 모든 Node로 전송합니다. Node는 해당 투표를 서명 값으로 검증합니다. 이는 Transaction 처리 대역폭을 결정하는 중요한 역할을 하게 되며, Validator가 미래의 Key Block Id에 미리 투표할 수 없습니다.
+
+
+### Block Time
+
+Block Interval은 기본 2초로 지정되어 있습니다. Epoch은 Block Interval의 3배로 지정되어 있는데, 이 시간동안에 다음과 같은 일이 일어납니다.
+
+*첫 번째 Epoch*에는 Validator가 투표를 진행하며, 모든 Node는 이를 전송받습니다. *두 번째 Epoch*에는 이를 취합하여 Transaction 처리 대역폭을 결정하고, 대역폭 내에 포함되는 Transaction들을 검증합니다. *세 번째 Epoch*에는 검증된 Transaction을 다음 처럼 Block을 구성하여 공개하도록 합니다.
+
+```JavaScript
+// BlockId = keccak256(BlockField);
+const BlockField = {
+  // 목표가 되는 시간대의 Key Block Id
+  KeyBlockID: string(Hash),
+  // 해당 Block에 포함된 Merkle Root
+  MerkleRoot: string(Hash),
+  // 검증된 Transaction의 모음
+  Transactions: [...Transaction],
+  // Vote's
+  Votes: [...Vote]
+}
+```
+
+다만 이 단계에서 모든 Validator는 동일한 Block을 생성할 수 없을 것입니다. Validator는 검증의 책임만을 가지고
+
+ 따라서 다음 조건에 의해서 올바른 Block을 걸러냅니다.
+
+* 모든 Node는 전송받은 Vote 증거를 가진다.
+  * Node가 Block에 담겨있는 Vote보다 적게 가진 경우, Block에 있는 Vote를 참조하고 해당 Block을 취한다.
+  * Node가 Block에 담겨있는 Vote보다 많이 가진 경우, 해당 Block을 버린다.
+  * Node가 Block에 담겨있는 Vote와 동일하게 가진 경우, 해당 Block을 취한다.
+  * Validator는 첫 Epoch에서 Vote 증거를 제출했어야 했다.
+* 가장 낮은 Transaction Fee는 0이며, 가장 높은 Transaction Fee는 전송받은 Block의 Transaction 들 중 첫 번째에 위치해 있다.
+  * 0과 가장 높은 Transaction Fee를 백분율화 하여 0과 1로 나눈다.
+  * Vote 증거에 의해서 Transaction 처리 비율을 검증한다. 처리 비율이 맞지 않는 Block은 버린다.
+  * 처리 비율에 따른 Transaction들을 검증한다.
+  * 위의 과정을 거쳐 올바른 Block이라면 취한다.
+
+### Next Block
+
+이런 방식으로 모든 Node는 Block의 검증과정에 참여하게 되고, 이는 투표 증거에 의해서 모든 Node가 자율적으로 따릅니다. 이 과정에서 성능이 떨어지는 Node는 네트워크 증거를 처리하는데 있어서 지연을 겪을 것이고, 네트워크에서 탈락하게 될 것입니다. 궁극적으로 Block의 합의 비용은 낮추고, Transaction 처리 속도를 상승시킨다고 볼 수 있습니다.
+
+다만 일부 많은 Token Holder가 일부러 투표하지 않고, 높은 수수료만 취한다고 볼 수 있으나 수수료 보상은 투표자들에게만 주어지고, 일부러 많은 Token을 가지고 있다고 하더라도 투표를 하는 것이 자신의 이익에 도움이 되므로 실제로 이러한 일은 일어나지 않을 것으로 보입니다.[[7]](https://bitcoin.org/bitcoin.pdf)
+
+또한 시간의 증거에 의해서 Block이 생성되며, Block이 확정되기 위해서는 Transaction을 필요로 하므로, Transaction이 발생되지 않는 시간에는 Block이 생성되지 않습니다.
+
+
+### Pseudo Random Number
+
+기초적으로 Validator의 투표 따라서 엔트로피의 증가점이 변경된다고 볼 수 있습니다. 투표량에 따라서 Merkle Patricia Tree[[5]](https://github.com/ethereum/wiki/wiki/Patricia-Tree)의 Root는 예상 불가능하게 변경되며 이는 256bit의 숫자로 이뤄져 난수로 사용이 가능합니다.
 
 
 ## Sharding
 
-Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태를 변경하는데 있어 Merkle Root[[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32)를 구성할 수 있도록 합니다. Merkle Tree를 가질 때, Validator의 투표에 따라 변동적인 Transaction 수용량을 가지기 때문에, Smart Contract별로 Merkle Root를 가지도록 합니다. 모든 네트워크 이용자는 관찰하고자 하는 특정 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 추적할 수 있습니다.
-
-<p align="center">
-  <img src="src/007.png">
-  <br>
-  <b> Smart Contract's Merkle Root </b> - Quartz Framework를 통해서 배포된 Smart Contract는 내부적으로 자체적인 Merkle Tree를 가지며, 해당 Smart Contract에 적용되는 Transaction에 따라 Merkle Root가 변경됩니다. Block의 Merkle Root는 배포된 Smart Contract 들의 Merkle Root로 결정됩니다. Block Merkle Root는 Entropy의 증가점이기 때문에, 난수로 사용될 수 있습니다.
-</p>
-
-모든 Transaction은 각 대상, 즉 Smart Contract 또는 이용자의 공개키가 되며, 각각 Merkle Tree를 가지기 때문에 추적 가능한 대상이 됩니다. 
+Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태를 변경하는데 있어 Merkle Patricia Tree[[5]](https://github.com/ethereum/wiki/wiki/Patricia-Tree)를 구성할 수 있도록 합니다. Merkle Tree를 가질 때, Validator의 투표에 따라 변동적인 Transaction 수용량을 가지기 때문에, Smart Contract별로 Merkle Patricia Tree를 가지도록 합니다. 모든 네트워크 이용자는 관찰하고자 하는 특정 Smart Contract의 상태나, 특정한 주소의 잔고 상태를 빠르게 추적할 수 있습니다. 따라서 Node가 State Trie의 특정 주소만을 동기화 하는 것도 가능합니다.
 
 
 ## Crypto Economy & Whitelabel SDK
 
-모든 최종 사용자들은 개인키와 공개키를 관리하지 않아야하고, Transaction 수수료를 지불하기 위해서 Ether를 소지하지 않아야 합니다. 다만 네트워크를 이용하기 위한 이용료로, 네트워크에 배포된 Token을 수수료로 지불하여야 합니다. Token을 수수료로 지불하는 것은 서비스를 이용하기 위한 당연한 조치입니다.
+모든 최종 사용자들은 개인키와 공개키를 관리하지 않아야하고, Transaction 수수료를 지불하기 위해서 Coin을 소지하지 않아야 합니다. 다만 네트워크 이용료로, 네트워크에 배포된 Token을 수수료로 지불하여야 합니다. Token을 수수료로 지불하는 것은 서비스를 이용하고, 네트워크를 유지하기 위한 당연한 행동이 됩니다.
 
-이용자들은 일정한 수수료를 지불하여 서비스를 이용합니다. Validator들은 최대한의 투표를 통해서 수수료를 얻을 것이기 때문에, Transaction이 아주 소량의 수수료를 지불하더라도 처리될 것입니다.
+이용자들은 일정한 수수료를 지불하여 서비스를 이용합니다. Validator들은 최대한의 투표를 통해서 수수료를 얻을 것이기 때문에, Transaction이 아주 소량의 수수료를 가지더라도 처리될 것입니다.
 
 이러한 점은 네트워크를 유지하는 보상을 자체적인 자산으로 지불하도록 하여, 가치가 별도의 네트워크를 통해서 창출될 수 있다는 점입니다. 상대적으로 사용성이 떨어지거나, 인기가 없는 네트워크는 자연적으로 도태되어 사라지게 될 것입니다.
 
 또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
-
-
-## Blueprint
-
-```JavaScript
-// TxHash = keccak256(...);
-{
-  From: [ Sender Address ],
-  To: [ Recipient Address ],
-  Value: [ Token Amount ],
-  Data: [ EVM Excute code ],
-  GasPrice: [ Token Amount ],
-  Time: [ Unix Time ],
-  Block: [ Transaction Based Block ],
-  Nonce: [ Counter ],
-  Sig: [ Signature Data ],
-}
-```
-<p align="center">
-  <b> Transaction </b> - 특징으로 Unix Time을 사용하며, 이 시간은 현재의 Block Time 보다 과거 또는 미래에 존재한다 하더라도, 무방합니다. 다만 미래의 시간으로 설정된 경우에는, 해당 Transaction이 미래의 시간 이후에 처리 되어야 합니다.
-</p>
-
-```JavaScript
-// VoteHash = keccak256(...);
-{
-  From: [ Sender Address ],
-  Target: [ Block Hash ],
-  Sig: [ Signature Data ],
-}
-```
-<p align="center">
-  <b> Vote Transaction </b> - 이는 Validator가 발생시킬 수 있는 특별한 Transaction 입니다.
-</p>
-
-```JavaScript
-// BlockHash = keccak256(...);
-{
-  Prev: [ Previous Block Hash ],
-  StartTime: [ Unix Time ],
-  EndTime: [ Unix Time ],
-  Data: [ Merkle Trees ],
-}
-```
-<p align="center">
-  <b> Block </b> - 이전 Block Hash를 기반으로, 새로운 Block을 생성합니다. 이 과정에서 같은 라운드에서 여러 Block Hash가 발생할 수 있으나, 이는 최종적으로 GHOST Protocol[[6]](https://eprint.iacr.org/2013/881.pdf)에 의해서 투표가 병합됩니다.
-</p>
-
 
 ## Citations
 - [[1]](https://github.com/ethereum/wiki/wiki/White-Paper) "Ethereum White Paper" https://github.com/ethereum/wiki/wiki/White-Paper
 - [[2]](https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf) "Bitcoin-NG: A Scalable Blockchain Protocol" https://www.usenix.org/system/files/conference/nsdi16/nsdi16-paper-eyal.pdf
 - [[3]](http://pmg.csail.mit.edu/papers/osdi99.pdf) "Practical Byzantine Fault Tolerance" http://pmg.csail.mit.edu/papers/osdi99.pdf
 - [[4]](https://dl.acm.org/citation.cfm?doid=41840.41841) "Epidemic algorithms for replicated database maintenance" https://dl.acm.org/citation.cfm?doid=41840.41841
-- [[5]](https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32) "A Digital Signature Based on a Conventional Encryption Function" https://link.springer.com/chapter/10.1007%2F3-540-48184-2_32
-
+- [[5]](https://github.com/ethereum/wiki/wiki/Patricia-Tree) "Patricia Tree" https://github.com/ethereum/wiki/wiki/Patricia-Tree
 - [[6]](https://eprint.iacr.org/2013/881.pdf) "Secure High-Rate Transaction Processing in Bitcoin" https://eprint.iacr.org/2013/881.pdf
+- [[7]](https://bitcoin.org/bitcoin.pdf) "Bitcoin: A Peer-to-Peer Electronic Cash System" https://bitcoin.org/bitcoin.pdf
