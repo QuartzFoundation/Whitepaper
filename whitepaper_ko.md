@@ -136,7 +136,7 @@ const VoteField = {
 Validator는 위에서 보는 Vote를 모든 Node로 전송합니다. Node는 해당 투표를 서명 값으로 검증합니다. 이는 Transaction 처리 대역폭을 결정하는 중요한 역할을 하게 되며, Validator가 미래의 Key Block Id에 미리 투표할 수 없습니다.
 
 
-### Block Time
+### Tree Shaking
 
 Block Interval은 기본 2초로 지정되어 있습니다. Epoch은 Block Interval의 3배로 지정되어 있는데, 이 시간동안에 다음과 같은 일이 일어납니다.
 
@@ -156,9 +156,7 @@ const BlockField = {
 }
 ```
 
-다만 이 단계에서 모든 Validator는 동일한 Block을 생성할 수 없을 것입니다. Validator는 검증의 책임만을 가지고
-
- 따라서 다음 조건에 의해서 올바른 Block을 걸러냅니다.
+다만 이 단계에서 모든 Validator는 동일한 Block을 생성할 수 없을 것입니다. Validator는 검증의 책임만을 가지고 모든 Node는 다음 조건에 의해서 올바른 Block을 걸러냅니다.
 
 * 모든 Node는 전송받은 Vote 증거를 가진다.
   * Node가 Block에 담겨있는 Vote보다 적게 가진 경우, Block에 있는 Vote를 참조하고 해당 Block을 취한다.
