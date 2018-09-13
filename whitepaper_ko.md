@@ -182,7 +182,6 @@ const BlockField = {
 
 또한 zkSTARK(zero knowledge Scalable Transparent ARgument of Knowledge)[[8]](https://eprint.iacr.org/2018/046.pdf)와 같은 영지식 증명이 Quartz 네트워크에 적용된다면, TransactionId를 제출하는 것으로 검증을 좀 더 단순화하고, Transaction 처리량을 무한대로 늘릴 수 있게 된다.
 
-
 ### Pseudo Random Number
 
 기초적으로 Validator의 투표 따라서 엔트로피의 증가점이 변경된다고 볼 수 있습니다. 투표량에 따라서 Merkle Patricia Tree[[5]](https://github.com/ethereum/wiki/wiki/Patricia-Tree)의 Root는 예상 불가능하게 변경되며 이는 256bit의 숫자로 이뤄져 난수로 사용이 가능합니다.
@@ -203,6 +202,7 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
 
 또한 최종 사용자가 사용하게 될 지갑이나, DApp은 Whitelabel SDK에 의해 기본적인 작동을 모두 처리할 수 있도록 하여 개발자는 로직과 디자인에 신경쓸 수 있도록 할 것입니다.
 
+
 ## Attack Scenario
 
 ### Nothing At Stake
@@ -214,6 +214,10 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
 일부 Token Holder가 일부러 투표하지 않고, 높은 수수료만 취한다고 볼 수 있으나 수수료 보상은 투표자들에게만 주어지고, 일부러 많은 Token을 가지고 있다고 하더라도 투표를 하는 것이 자신의 이익에 도움이 되므로 실제로 이러한 일은 일어나지 않을 것으로 보입니다.[[7]](https://bitcoin.org/bitcoin.pdf)
 
 또한 다음 Block Round에서 상대적인 수수료 길이가 대폭 낮아질 것이기 때문에, 상대적으로 완화될 것입니다.
+
+### Block Withholding Attack
+
+Block을 생성하더라도 공개하지 않거나, Block을 생성하지 않는 것 BWA라고 볼 수 있다. Quartz는 완전히 분산된(Distributed) Proof of Stake 시스템을 사용하고 있다. 소수의 Staker들은 투표에 따라 자율적으로 수수료를 챙길 수 있으며, 이러한 투표 행위는 수수료를 얻을 수 있는 행위이다. 이러한 공격은 소수의 Block 생성자에게 수수료를 모두 수수할 수 있도록 하기 때문에, 실질적으로 일어날 수 있는 환경이 되지 않는다.
 
 
 ## Citations
