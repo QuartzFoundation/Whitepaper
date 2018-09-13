@@ -13,5 +13,3 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 * [한국어](https://github.com/QuartzWorld/Whitepaper/blob/master/whitepaper_ko.md)
 * [English(prepare)]()
-
-### This project will not proceed ICO 😎

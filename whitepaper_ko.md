@@ -109,7 +109,7 @@ const KeyBlockIdField = {
   // Network Id에 종속된 KeyBlockId 생성 유도
   NetworkId: string(Hash),
   // 이전 Block에 대한 Id를 참조로 가짐
-  PrevBlockId: string(Hash)
+  PrevBlockId: [...string(Hash)]
 }
 ```
 
@@ -147,8 +147,8 @@ Block Interval은 기본 2초로 지정되어 있습니다. Epoch은 Block Inter
 const BlockField = {
   // 목표가 되는 시간대의 Key Block Id
   KeyBlockID: string(Hash),
-  // 해당 Block에 포함된 Merkle Root
-  MerkleRoot: string(Hash),
+  // 해당 Block에 포함된 Merkle Patricia Root
+  MerklePatriciaRoot: string(Hash),
   // 검증된 Transaction의 모음
   Transactions: [...Transaction],
   // Vote's
@@ -168,6 +168,9 @@ const BlockField = {
   * Vote 증거에 의해서 Transaction 처리 비율을 검증한다. 처리 비율이 맞지 않는 Block은 버린다.
   * 처리 비율에 따른 Transaction들을 검증한다.
   * 위의 과정을 거쳐 올바른 Block이라면 취한다.
+* 수수료가 가장 많이 포함된 Block 단 하나를 선택한다.
+
+이는 일종의 유전적 선택에 의해서, 가장 수익이 높은 Block으로 선택된다고 볼 수 있으며, 여기서 버려지는 Block이 처리한 Transaction은 다음 KeyBlock에서 GHOST Protocol[[6]](https://eprint.iacr.org/2013/881.pdf)에 의해 통합됩니다.
 
 ### Next Block
 
@@ -176,6 +179,8 @@ const BlockField = {
 또한 시간의 증거에 의해서 Block이 생성되며, Block이 확정되기 위해서는 Transaction을 필요로 하므로, Transaction이 발생되지 않는 시간에는 Block이 생성되지 않습니다.
 
 이러한 검증 방법은, Private Network에서도 강점을 발휘합니다. 모든 Transaction은 Validator와 Node가 가지게 되며, 투표에 의해 대역폭에 따른 검증이 이뤄지기 때문에 검열에 대한 저항성이 존재합니다.
+
+또한 zkSTARK(zero knowledge Scalable Transparent ARgument of Knowledge)[[8]](https://eprint.iacr.org/2018/046.pdf)와 같은 영지식 증명이 Quartz 네트워크에 적용된다면, TransactionId를 제출하는 것으로 검증을 좀 더 단순화하고, Transaction 처리량을 무한대로 늘릴 수 있게 된다.
 
 
 ### Pseudo Random Number
@@ -219,3 +224,4 @@ Quartz Framework는 EVM상의 배포된 Smart Contract가 내부적으로 상태
 - [[5]](https://github.com/ethereum/wiki/wiki/Patricia-Tree) "Patricia Tree" https://github.com/ethereum/wiki/wiki/Patricia-Tree
 - [[6]](https://eprint.iacr.org/2013/881.pdf) "Secure High-Rate Transaction Processing in Bitcoin" https://eprint.iacr.org/2013/881.pdf
 - [[7]](https://bitcoin.org/bitcoin.pdf) "Bitcoin: A Peer-to-Peer Electronic Cash System" https://bitcoin.org/bitcoin.pdf
+- [[8]](https://eprint.iacr.org/2018/046.pdf) "Scalable, transparent, and post-quantum secure computational integrity" https://eprint.iacr.org/2018/046.pdf
