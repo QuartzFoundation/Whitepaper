@@ -24,7 +24,7 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 Blockchain은 다양한 이용자들이 사용하는 공용 플랫폼이며, 다수의 Transaction이 발생합니다. 이러한 Transaction은 제한된 크기의 Block에 담겨야 처리된 것으로 간주합니다. Initial Coin Offering과 같은 이벤트가 Blockchain에서 발생하는 경우, Block에 Transaction을 포함하기 위해 전체적으로 Transaction 수수료가 상승하게 됩니다. 이러한 이벤트에 참여하지 않는 다수의 이용자들도 평균적으로 상승하는 수수료에 맞춰 지불하게 됩니다.
 
-Blockchain 상에서 다양한 자산들이 Token 형태로 발행되었으며, 이것들은 Coin과 다르게 이용 방법과 가치가 각각 다릅니다. 하지만 이러한 Token을 전송하거나, 이용할 때는 주 Blockchain이 제공하는 Coin을 이용하여 Transaction 수수료를 지불하여야 하는 단점이 존재합니다. [EIP-865](https://github.com/ethereum/EIPs/issues/865)이나 [EIP-1077](https://eips.ethereum.org/EIPS/eip-1077)은 Token을 Transaction 수수료로 지불할 수 있도록 하였으나, 이는 근본적으로 타인을 통한 Transaction 처리이기 때문에 근본적인 해결 방법은 되지 못합니다.
+Blockchain 상에서 다양한 자산들이 Token 형태로 발행되었으며, 이것들은 Coin과 다르게 이용 방법과 가치가 각각 다릅니다. 하지만 이러한 Token을 전송하거나, 이용할 때는 주 Blockchain이 제공하는 Coin을 이용하여 Transaction 수수료를 지불하여야 하는 단점이 존재합니다. [EIP-865](https://github.com/ethereum/EIPs/issues/865)이나 [EIP-1077](https://eips.ethereum.org/EIPS/eip-1077)은 Token을 Transaction 수수료로 지불할 수 있도록 하였으나, 이는 근본적으로 타인을 통한 Transaction 처리이기 때문에 해결 방법은 되지 못합니다.
 
 
 ## Introduction

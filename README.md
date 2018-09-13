@@ -11,5 +11,5 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 
 ## Whitepaper
 
-* [한국어](https://github.com/QuartzWorld/Whitepaper/blob/master/whitepaper_ko.md)
+* [한국어](https://github.com/QuartzFoundation/Whitepaper/blob/master/whitepaper_ko.md)
 * [English(prepare)]()
