@@ -5,8 +5,8 @@ author <a href="mailto:ys.choi@me.com">Yoonsung Choi</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/QuartzWorld/Whitepaper"><img src="https://badge.fury.io/gh/QuartzWorld%2FWhitepaper.svg" /></a>
-  <a href="https://github.com/QuartzWorld/Whitepaper/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" /></a>
+  <a href="https://github.com/QuartzFoundation/Whitepaper"><img src="https://badge.fury.io/gh/QuartzFoundation%2FWhitepaper.svg" /></a>
+  <a href="https://github.com/QuartzFoundation/Whitepaper/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="License: LGPL v3" /></a>
 </p>
 
 ## Abstract
